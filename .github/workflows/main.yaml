@@ -1,0 +1,22 @@
+name: Publish
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+      - uses: actions/checkout@v2
+
+      - name: Set env
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - uses: imjasonh/setup-ko@v0.4
+      - run: ko publish -B . --tags latest,$RELEASE_VERSION
+
